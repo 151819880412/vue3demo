@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+
+    // 被代理的原始对象
+    const user ={
+      name:'jhon',
+      age:12
+    }
+
+    /*
+      proxyUser 是代理对象，user 是被代理对象
+      后面所有的操作都是通过代理对象来操作被代理对象的内部属性
+    */
+    const proxyUser = new Proxy(user,{
+      // 拦截读取属性值
+      get(target,property,receiver){
+        /**
+            target：  目标对象
+            property：被获取的属性名
+            receiver：Proxy或者继承Proxy的对象
+          */
+        console.log('劫持get',target,property,receiver)
+        // Reflect.get()方法与从 对象 (target[propertyKey]) 中读取属性类似，但它是通过一个函数执行来操作的。
+        return Reflect.get(target,property,receiver)
+      },
+      // 拦截设置属性值或者添加新属性
+      set(target,property,value,receiver){
+        /**
+            target：  目标对象
+            property  将被设置的属性名或Symbol
+            value     新属性值
+            receiver  通常是proxy本身,但handler的set方法也有可能在原型链上,或以其他方式被间接地调用(因此不一定是proxy本身)
+          */
+        console.log('劫持set',target,property,value,receiver)
+        // 修改被代理对象的对应属性值或者添加新属性
+        return Reflect.set(target,property,value,receiver)
+      },
+      // 拦截删除属性
+      deleteProperty(target,property){
+        /**
+            target：  目标对象
+            property  待删除的属性名
+          */
+        console.log('劫持deleteProperty',target,property)
+        return Reflect.deleteProperty(target,property)
+      }
+    })
+
+    // 读取属性
+      // console.log(proxyUser.name)
+    // 设置属性
+      // proxyUser.name +='--'
+      // console.log(proxyUser,user)
+    // 添加属性
+      // proxyUser.sex = '男'
+      // console.log(proxyUser,user)
+    // 删除属性
+      delete proxyUser.age
+      console.log(proxyUser,user)
+
+  </script>
+</body>
+</html>
